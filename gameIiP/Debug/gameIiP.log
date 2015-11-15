@@ -1,0 +1,4 @@
+﻿  gameIiP.cpp
+d:\my documents\visual studio 2015\projects\gameiip\gameiip\gameiip.cpp(203): warning C4715: 'menu': not all control paths return a value
+d:\my documents\visual studio 2015\projects\gameiip\gameiip\gameiip.cpp(244): warning C4715: 'gameRun': not all control paths return a value
+  gameIiP.vcxproj -> D:\My Documents\Visual Studio 2015\Projects\gameIiP\Debug\gameIiP.exe
