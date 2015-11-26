@@ -4,8 +4,8 @@
 struct enemy {
 	sf::Sprite sprite;
 	double speed;
-	int coordinate1;
-	int coordinate2;
+	int coordinateX;
+	int coordinateY;
 	bool flagStartSprite;
 	bool flagIsReal;
 	bool isEnemy;
@@ -39,6 +39,10 @@ struct gameData{
 	int flagClose;
 	int score = 0;
 	int heal;
+	int posXStartS = 290;
+	int posYStartS = 150;
+	int posXExiteS = 300;
+	int posYExiteS = 300;
 	sf::RenderWindow window;
 	sf::Texture enemyTexture;
 	sf::Sprite  enemy;

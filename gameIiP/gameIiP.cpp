@@ -86,11 +86,11 @@ void coordinateCreat(float & timeCreate, config & conf, gameData & gData){
 	if (timeCreate <= 0){
 		for (int i = 0; i < conf.namberEnemy; i++){
 			if (!(gData.enemys[i].flagIsReal)){
-				float coor1, coor2;                                                                                                       
+				float coorX, coorY;                                                                                                       
 				std::random_device rd;
 				std::mt19937 gen(rd());
 				std::uniform_int_distribution<> dist(0, 32700); // 	
-				coor2 = (float)(dist(gen) % (gData.window.getSize().y - gData.enemyRect.height));
+				coorY = (float)(dist(gen) % (gData.window.getSize().y - gData.enemyRect.height));
 				if ((dist(gen) % 3) == 2){
 					gData.enemys[i].sprite = gData.friendd;
 					gData.enemys[i].isEnemy = false;
@@ -99,13 +99,13 @@ void coordinateCreat(float & timeCreate, config & conf, gameData & gData){
 					gData.enemys[i].sprite = gData.enemy; gData.enemys[i].isEnemy = true; 
 				}
 				if (dist(gen) % 2){ 
-					coor1 = (float)gData.window.getSize().x - gData.enemyRect.width;
+					coorX = (float)gData.window.getSize().x - gData.enemyRect.width;
 				}
 				else{
-					coor1 = 0;
+					coorX = 0;
 				}
-				gData.enemys[i].coordinate1 = (int)coor1;
-				gData.enemys[i].coordinate2 = (int)coor2;
+				gData.enemys[i].coordinateX = (int)coorX;
+				gData.enemys[i].coordinateY = (int)coorY;
 				gData.enemys[i].speed = 0.0001 * (dist(gen) % 6 + 4);
 				gData.enemys[i].moveTaktic = dist(gen) % 2;
 				gData.enemys[i].flagIsReal = true;
@@ -119,19 +119,31 @@ void coordinateCreat(float & timeCreate, config & conf, gameData & gData){
 
 void moveEnemy(config & conf, gameData & gData, float & time, int & i){	
 	if (gData.enemys[i].flagStartSprite){
-		gData.enemys[i].sprite.setPosition((float)gData.enemys[i].coordinate1, (float)gData.enemys[i].coordinate2);
+		gData.enemys[i].sprite.setPosition((float)gData.enemys[i].coordinateX, (float)gData.enemys[i].coordinateY);
 		gData.enemys[i].flagStartSprite = false;
 	}		 
 	if (gData.enemys[i].moveTaktic == 0){
-		if (gData.enemys[i].coordinate1 > 0) { (gData.enemys[i].sprite).move((float)-gData.enemys[i].speed*time, 0.0); (gData.enemys[i].sprite).setTextureRect(IntRect(0, 0, gData.enemyRect.width, gData.enemyRect.height)); }             ////////
-		if (gData.enemys[i].coordinate1 == 0) { (gData.enemys[i].sprite).move((float)gData.enemys[i].speed*time, 0.0); (gData.enemys[i].sprite).setTextureRect(IntRect(gData.enemyRect.width, 0, -gData.enemyRect.width, gData.enemyRect.height)); }           ////////
+		if (gData.enemys[i].coordinateX > 0) { 
+			(gData.enemys[i].sprite).move((float)-gData.enemys[i].speed*time, 0.0); (gData.enemys[i].sprite).setTextureRect(IntRect(0, 0, gData.enemyRect.width, gData.enemyRect.height));
+		}      ////////
+		if (gData.enemys[i].coordinateX == 0) {
+			(gData.enemys[i].sprite).move((float)gData.enemys[i].speed*time, 0.0); (gData.enemys[i].sprite).setTextureRect(IntRect(gData.enemyRect.width, 0, -gData.enemyRect.width, gData.enemyRect.height)); 
+		}           ////////
 	}
 	else{	
-		if (gData.enemys[i].coordinate1 > 0) { (gData.enemys[i].sprite).move((float)-gData.enemys[i].speed*time, 0.0); (gData.enemys[i].sprite).setTextureRect(IntRect(0, 0, gData.enemyRect.width, gData.enemyRect.height)); }             ////////
-		if (gData.enemys[i].coordinate1 == 0) { (gData.enemys[i].sprite).move((float)gData.enemys[i].speed*time, 0.0); (gData.enemys[i].sprite).setTextureRect(IntRect(gData.enemyRect.width, 0, -gData.enemyRect.width, gData.enemyRect.height)); }           ////////
+		if (gData.enemys[i].coordinateX > 0) { 
+			(gData.enemys[i].sprite).move((float)-gData.enemys[i].speed*time, 0.0); (gData.enemys[i].sprite).setTextureRect(IntRect(0, 0, gData.enemyRect.width, gData.enemyRect.height));
+		}
+		if (gData.enemys[i].coordinateX == 0) {
+			(gData.enemys[i].sprite).move((float)gData.enemys[i].speed*time, 0.0); (gData.enemys[i].sprite).setTextureRect(IntRect(gData.enemyRect.width, 0, -gData.enemyRect.width, gData.enemyRect.height)); 
+		}
 		gData.enemys[i].Ymove = 0.001*sin(0.01 * gData.enemys[i].sprite.getPosition().x) - gData.enemys[i].Ymove;
-		if (gData.enemys[i].coordinate1 > 0) { (gData.enemys[i].sprite).move(0.0, (float)gData.enemys[i].Ymove*time); (gData.enemys[i].sprite).setTextureRect(IntRect(0, 0, gData.enemyRect.width, gData.enemyRect.height)); }             ////////
-		if (gData.enemys[i].coordinate1 == 0) { (gData.enemys[i].sprite).move(0.0, (float)gData.enemys[i].Ymove*time); (gData.enemys[i].sprite).setTextureRect(IntRect(gData.enemyRect.width, 0, -gData.enemyRect.width, gData.enemyRect.height)); }           ////////
+		if (gData.enemys[i].coordinateX > 0) {
+			(gData.enemys[i].sprite).move(0.0, (float)gData.enemys[i].Ymove*time); (gData.enemys[i].sprite).setTextureRect(IntRect(0, 0, gData.enemyRect.width, gData.enemyRect.height));
+		}
+		if (gData.enemys[i].coordinateX == 0) {
+			(gData.enemys[i].sprite).move(0.0, (float)gData.enemys[i].Ymove*time); (gData.enemys[i].sprite).setTextureRect(IntRect(gData.enemyRect.width, 0, -gData.enemyRect.width, gData.enemyRect.height));
+		}
 	}
 };
 
@@ -162,8 +174,8 @@ bool isVisibelEnemy(config & conf, gameData & gData, int & i){
 
 bool menu(config & conf, gameData & gData){		
 	gData.window.clear();
-	gData.startBottomSprite.setPosition(290, 150);
-	gData.exiteBottomSprite.setPosition(300, 300);
+	gData.startBottomSprite.setPosition(gData.posXStartS, gData.posYStartS);
+	gData.exiteBottomSprite.setPosition(gData.posXExiteS, gData.posYExiteS);
 	gData.startBottomSprite.setTextureRect(IntRect(0, 0, gData.startRect.width, gData.startRect.height));
 	gData.exiteBottomSprite.setTextureRect(IntRect(0, 0, gData.exiteRect.width, gData.exiteRect.height));
 	gData.window.draw(gData.startBottomSprite);
