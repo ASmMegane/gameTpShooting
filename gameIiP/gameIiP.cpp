@@ -13,18 +13,6 @@
 #include <iostream>
 
 
-using namespace sf;
-
-template< class C > std::string ToString(C obj){
-	return std::to_string(obj);
-}
-
-std::string ToString(char * cp){
-	return std::string(cp);
-}
-
-
-
 void configPrepare(config & conf){
 	conf.enemyImg.loadFromFile(conf.imageAdres);
 	conf.friendImg.loadFromFile(conf.imageAdresF);
@@ -82,14 +70,22 @@ void gameDataInitialize(config & conf, gameData & gData){
 	gData.flagClose = 0;
 }
 
+bool isSpritesIntersectedWithMous(sf::Sprite & sprite, int  & posMousX, int & posMousY) {
+	if ((((posMousX > sprite.getPosition().x) && (posMousX < sprite.getPosition().x + abs(sprite.getTextureRect().width)))
+		&& ((posMousY > sprite.getPosition().y) && (posMousY < sprite.getPosition().y + abs(sprite.getTextureRect().height))))) {
+		return true;
+	}
+	return false;
+}
+
 void coordinateCreat(float & timeCreate, config & conf, gameData & gData){	
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> dist(0, 32700); 
 	if (timeCreate <= 0){
 		for (int i = 0; i < conf.namberEnemy; i++){
 			if (!(gData.enemys[i].flagIsReal)){
-				float coorX, coorY;                                                                                                       
-				std::random_device rd;
-				std::mt19937 gen(rd());
-				std::uniform_int_distribution<> dist(0, 32700); // 	
+				float coorX, coorY;  
 				coorY = (float)(dist(gen) % (gData.window.getSize().y - gData.enemyRect.height));
 				if ((dist(gen) % 3) == 2){
 					gData.enemys[i].sprite = gData.friendd;
@@ -124,25 +120,31 @@ void moveEnemy(config & conf, gameData & gData, float & time, int & i){
 	}		 
 	if (gData.enemys[i].moveTaktic == 0){
 		if (gData.enemys[i].coordinateX > 0) { 
-			(gData.enemys[i].sprite).move((float)-gData.enemys[i].speed*time, 0.0); (gData.enemys[i].sprite).setTextureRect(IntRect(0, 0, gData.enemyRect.width, gData.enemyRect.height));
-		}      ////////
+			(gData.enemys[i].sprite).move((float)-gData.enemys[i].speed*time, 0.0);
+			(gData.enemys[i].sprite).setTextureRect(sf::IntRect(0, 0, gData.enemyRect.width, gData.enemyRect.height));
+		}   
 		if (gData.enemys[i].coordinateX == 0) {
-			(gData.enemys[i].sprite).move((float)gData.enemys[i].speed*time, 0.0); (gData.enemys[i].sprite).setTextureRect(IntRect(gData.enemyRect.width, 0, -gData.enemyRect.width, gData.enemyRect.height)); 
-		}           ////////
+			(gData.enemys[i].sprite).move((float)gData.enemys[i].speed*time, 0.0);
+			(gData.enemys[i].sprite).setTextureRect(sf::IntRect(gData.enemyRect.width, 0, -gData.enemyRect.width, gData.enemyRect.height)); 
+		} 
 	}
 	else{	
 		if (gData.enemys[i].coordinateX > 0) { 
-			(gData.enemys[i].sprite).move((float)-gData.enemys[i].speed*time, 0.0); (gData.enemys[i].sprite).setTextureRect(IntRect(0, 0, gData.enemyRect.width, gData.enemyRect.height));
+			(gData.enemys[i].sprite).move((float)-gData.enemys[i].speed*time, 0.0);
+			(gData.enemys[i].sprite).setTextureRect(sf::IntRect(0, 0, gData.enemyRect.width, gData.enemyRect.height));
 		}
 		if (gData.enemys[i].coordinateX == 0) {
-			(gData.enemys[i].sprite).move((float)gData.enemys[i].speed*time, 0.0); (gData.enemys[i].sprite).setTextureRect(IntRect(gData.enemyRect.width, 0, -gData.enemyRect.width, gData.enemyRect.height)); 
+			(gData.enemys[i].sprite).move((float)gData.enemys[i].speed*time, 0.0);
+			(gData.enemys[i].sprite).setTextureRect(sf::IntRect(gData.enemyRect.width, 0, -gData.enemyRect.width, gData.enemyRect.height)); 
 		}
 		gData.enemys[i].Ymove = 0.001*sin(0.01 * gData.enemys[i].sprite.getPosition().x) - gData.enemys[i].Ymove;
 		if (gData.enemys[i].coordinateX > 0) {
-			(gData.enemys[i].sprite).move(0.0, (float)gData.enemys[i].Ymove*time); (gData.enemys[i].sprite).setTextureRect(IntRect(0, 0, gData.enemyRect.width, gData.enemyRect.height));
+			(gData.enemys[i].sprite).move(0.0, (float)gData.enemys[i].Ymove*time);
+			(gData.enemys[i].sprite).setTextureRect(sf::IntRect(0, 0, gData.enemyRect.width, gData.enemyRect.height));
 		}
 		if (gData.enemys[i].coordinateX == 0) {
-			(gData.enemys[i].sprite).move(0.0, (float)gData.enemys[i].Ymove*time); (gData.enemys[i].sprite).setTextureRect(IntRect(gData.enemyRect.width, 0, -gData.enemyRect.width, gData.enemyRect.height));
+			(gData.enemys[i].sprite).move(0.0, (float)gData.enemys[i].Ymove*time);
+			(gData.enemys[i].sprite).setTextureRect(sf::IntRect(gData.enemyRect.width, 0, -gData.enemyRect.width, gData.enemyRect.height));
 		}
 	}
 };
@@ -154,11 +156,10 @@ bool isVisibelEnemy(config & conf, gameData & gData, int & i){
 		gData.enemys[i].flagIsReal = false;		
 		return false;
 	}
-	else if (Mouse::isButtonPressed(sf::Mouse::Left))	{
-		int mousX = Mouse::getPosition(gData.window).x;
-		int mousY = Mouse::getPosition(gData.window).y;
-		if ((((mousX > gData.enemys[i].sprite.getPosition().x) && (mousX < gData.enemys[i].sprite.getPosition().x + gData.enemyRect.width))
-			&& ((mousY > gData.enemys[i].sprite.getPosition().y) && (mousY < gData.enemys[i].sprite.getPosition().y + gData.enemyRect.height)))){
+	else if (sf::Mouse::isButtonPressed(sf::Mouse::Left))	{
+		int mousX = sf::Mouse::getPosition(gData.window).x;
+		int mousY = sf::Mouse::getPosition(gData.window).y;
+		if (isSpritesIntersectedWithMous(gData.enemys[i].sprite, mousX, mousY)){
 			gData.enemys[i].flagIsReal = false;
 			if (gData.enemys[i].isEnemy){
 				gData.score++;	
@@ -174,14 +175,14 @@ bool isVisibelEnemy(config & conf, gameData & gData, int & i){
 
 bool menu(config & conf, gameData & gData){		
 	gData.window.clear();
-	gData.startBottomSprite.setPosition(gData.posXStartS, gData.posYStartS);
-	gData.exiteBottomSprite.setPosition(gData.posXExiteS, gData.posYExiteS);
-	gData.startBottomSprite.setTextureRect(IntRect(0, 0, gData.startRect.width, gData.startRect.height));
-	gData.exiteBottomSprite.setTextureRect(IntRect(0, 0, gData.exiteRect.width, gData.exiteRect.height));
+	gData.startBottomSprite.setPosition((float)gData.posXStartS, (float)gData.posYStartS);
+	gData.exiteBottomSprite.setPosition((float)gData.posXExiteS, (float)gData.posYExiteS);
+	gData.startBottomSprite.setTextureRect(sf::IntRect(0, 0, gData.startRect.width, gData.startRect.height));
+	gData.exiteBottomSprite.setTextureRect(sf::IntRect(0, 0, gData.exiteRect.width, gData.exiteRect.height));
 	gData.window.draw(gData.startBottomSprite);
 	gData.window.draw(gData.exiteBottomSprite);		
 
-	conf.text.setString(conf.score + ToString(gData.score) );
+	conf.text.setString(conf.score + std::to_string(gData.score));
 	gData.window.draw(conf.text);
 
 	gData.window.display();
@@ -199,15 +200,13 @@ bool menu(config & conf, gameData & gData){
 				gData.window.display();
 			}
 		}
-		if (Mouse::isButtonPressed(sf::Mouse::Right)){
-			int mousX = Mouse::getPosition(gData.window).x;
-			int mousY = Mouse::getPosition(gData.window).y;
-			if ((((mousX > gData.startBottomSprite.getPosition().x) && (mousX < gData.startBottomSprite.getPosition().x + gData.startRect.width))
-				&& ((mousY > gData.startBottomSprite.getPosition().y) && (mousY < gData.startBottomSprite.getPosition().y + gData.startRect.height)))){
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Right)){
+			int mousX = sf::Mouse::getPosition(gData.window).x;
+			int mousY = sf::Mouse::getPosition(gData.window).y;
+			if (isSpritesIntersectedWithMous(gData.startBottomSprite, mousX, mousY)){
 				return true;
 			}
-			else if ((((mousX > gData.exiteBottomSprite.getPosition().x) && (mousX < gData.exiteBottomSprite.getPosition().x + gData.exiteRect.width))
-				&& ((mousY > gData.exiteBottomSprite.getPosition().y) && (mousY < gData.exiteBottomSprite.getPosition().y + gData.exiteRect.height)))){
+			else if (isSpritesIntersectedWithMous(gData.exiteBottomSprite, mousX, mousY)){
 				return false;
 			}
 		}
@@ -215,12 +214,12 @@ bool menu(config & conf, gameData & gData){
 };
 
 bool gameRun(config & conf, gameData & gData){
-	Clock clock;
+	sf::Clock clock;
 	float timeCreate = conf.timeDistanceCreate;
 		
 	while (gData.window.isOpen()){
 		gData.window.clear();
-		conf.text.setString(conf.healHave + ToString(gData.heal));
+		conf.text.setString(conf.healHave + std::to_string(gData.heal));
 		gData.window.draw(conf.text);
 		float time = (float)clock.getElapsedTime().asMicroseconds();
 		clock.restart();
